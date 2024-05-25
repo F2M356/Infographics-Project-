@@ -56,7 +56,7 @@ plt.savefig("22055871_deaths_per_year.png", dpi=300)
 plt.figure(figsize=(14, 7))
 sns.barplot(x=top_countries.values, y=top_countries.index, palette='cubehelix')
 for i, value in enumerate(top_countries.values):
-    plt.text(value + 100, i, f'{value:.0f}', ha='center', va='center')
+    plt.text(value + 100, i, f'{value:.0f}', ha='left', va='center')
 plt.title("Top 10 Countries by Number of Terrorist Attacks", fontsize=16, fontweight='bold', color='darkgreen')
 plt.xlabel("Number of Attacks", fontsize=14, color='darkblue')
 plt.ylabel("Country", fontsize=14, color='darkblue')
@@ -65,12 +65,40 @@ plt.text(max(top_countries.values)*0.5, 8, "Most attacks in a few countries", fo
 plt.tight_layout()
 plt.savefig("22055871_top_countries.png", dpi=300)
 
-# Plot 4: Top 10 Attack Types (Pie Chart)
+# Plot 4: Top 10 Attack Types (Pie Chart with Percentage in Legend)
 plt.figure(figsize=(14, 7))
-colors = sns.color_palette('Set2')
-wedges, texts, autotexts = plt.pie(attack_types.values, colors=colors, startangle=140, autopct='%1.1f%%', textprops=dict(color="w", fontsize=12))
-plt.legend(wedges, attack_types.index, title="Attack Types", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), fontsize=12)
+colors = plt.get_cmap('Set2').colors
+
+# Create the pie chart
+wedges, texts, autotexts = plt.pie(
+    attack_types.values,
+    colors=colors,
+    startangle=140,
+    autopct='%1.1f%%',
+    pctdistance=0.85,  # Adjust the position of the percentage labels
+    textprops=dict(color="black", fontsize=12)
+)
+
+# Draw a circle at the center of pie to make it look like a donut
+centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+fig = plt.gcf()
+fig.gca().add_artist(centre_circle)
+
+# Create legend labels with percentages
+legend_labels = [f'{label}: {percent:.1f}%' for label, percent in zip(attack_types.index, (attack_types.values / attack_types.sum()) * 100)]
+plt.legend(
+    wedges,
+    legend_labels,
+    title="Attack Types",
+    loc="center left",
+    bbox_to_anchor=(1, 0, 0.5, 1),
+    fontsize=12
+)
+
+# Add title
 plt.title("Top 10 Attack Types", fontsize=16, fontweight='bold', color='darkgreen')
+
+# Improve layout
 plt.tight_layout()
 plt.savefig("22055871_attack_types.png", dpi=300)
 
@@ -99,7 +127,7 @@ axes[0, 1].text(1975, max(total_deaths.values)*0.9, "High fatalities in peak yea
 # Subplot 3
 sns.barplot(x=top_countries.values, y=top_countries.index, palette='cubehelix', ax=axes[1, 0])
 for i, value in enumerate(top_countries.values):
-    axes[1, 0].text(value + 100, i, f'{value:.0f}', ha='center', va='center')
+    axes[1, 0].text(value + 100, i, f'{value:.0f}', ha='left', va='center')
 axes[1, 0].set_title("Top 10 Countries by Number of Terrorist Attacks", fontsize=16, fontweight='bold', color='darkgreen')
 axes[1, 0].set_xlabel("Number of Attacks", fontsize=14, color='darkblue')
 axes[1, 0].set_ylabel("Country", fontsize=14, color='darkblue')
@@ -107,31 +135,60 @@ axes[1, 0].grid(True, axis='x', linestyle='--', linewidth=0.7)
 axes[1, 0].text(max(top_countries.values)*0.5, 8, "Most attacks in a few countries", fontsize=12, color='blue')
 
 # Subplot 4
-wedges, texts, autotexts = axes[1, 1].pie(attack_types.values, colors=colors, startangle=140, autopct='%1.1f%%', textprops=dict(color="w", fontsize=12))
-axes[1, 1].legend(wedges, attack_types.index, title="Attack Types", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), fontsize=12)
+# Create the pie chart on the specified subplot
+wedges, texts, autotexts = axes[1, 1].pie(
+    attack_types.values,
+    colors=colors,
+    startangle=140,
+    autopct='%1.1f%%',
+    pctdistance=0.85,  # Adjust the position of the percentage labels
+    textprops=dict(color="black", fontsize=12)
+)
+
+# Draw a circle at the center of pie to make it look like a donut
+centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+axes[1, 1].add_artist(centre_circle)
+
+# Adjust percentage labels to be placed outside the pie
+for autotext in autotexts:
+    autotext.set_fontsize(12)
+    autotext.set_color('black')
+    x, y = autotext.get_position()
+    autotext.set_position((x*1.4, y*1.4))  # Further move the labels outward
+
+# Create legend labels with percentages
+legend_labels = [f'{label}: {percent:.1f}%' for label, percent in zip(attack_types.index, (attack_types.values / attack_types.sum()) * 100)]
+axes[1, 1].legend(
+    wedges,
+    legend_labels,
+    title="Attack Types",
+    loc="center left",
+    bbox_to_anchor=(1, 0, 0.5, 1),
+    fontsize=12
+)
+
+# Add title
 axes[1, 1].set_title("Top 10 Attack Types", fontsize=16, fontweight='bold', color='darkgreen')
 
 fig.suptitle("Global Terrorism Analysis\nKhadiza Mahdin, Student ID: 22055871", fontsize=18, fontweight='bold')
 
-# Add explanations
-explanations = [
-    "Plot 1: Shows the trend of terrorist attacks over the years.",
-    "Plot 2: Illustrates the number of deaths due to terrorist attacks each year.",
-    "Plot 3: Highlights the top 10 countries with the highest number of terrorist attacks.",
-    "Plot 4: Displays the distribution of the top 10 types of terrorist attacks."
-]
+# Add the given information in a box
+info_text = (
+    "The dashboard analyzes the status of terrorism around the world from 1970 through 2017.\n\n"
+    "Plot 1 shows us clearly that starting from 2011 the number of terrorist attacks experienced rapid upturn peaking at 2014 "
+    "(about 17000 incidents) with a declining trend from the year next.\n\n"
+    "Plot 2 implies that at the same year of 2014 the casualties due to the terrorist attacks were the highest which crosses 40000.\n\n"
+    "Plot 3 shows Afghanistan, Pakistan, and Iraq withstand the highest number of terrorist attacks while Iraq tops with number of more than 24000 cases.\n\n"
+    "Plot 4 shows the highest number (48.6%) of the terrorist attacks were executed with Bombing while about a quarter of the attacks caused by armed men.\n\n"
+    "In summary, we can say that Iraq endured the highest number of death by terrorists where bombs were the primary weapon of destruction and the peak year for terrorist attack was 2014."
+)
 
-for i, exp in enumerate(explanations):
-    plt.figtext(0.1, 0.01 + i * 0.03, exp, fontsize=12, color='black', ha='left')
+# Create a text box
+props = dict(boxstyle='round,pad=1', facecolor='lightyellow', edgecolor='black')
+plt.figtext(0.5, 0.02, info_text, wrap=True, horizontalalignment='center', fontsize=12, bbox=props)
 
-# Add name and ID in the right bottom corner
-plt.figtext(0.95, 0.01, "Khadiza Mahdin, ID: 22055871", fontsize=12, color='black', ha='right')
-
-plt.tight_layout(rect=[0, 0.05, 1, 0.95])
+plt.tight_layout(rect=[0, 0.1, 1, 0.95])
 plt.savefig("22055871.png", dpi=300)
 
 # Display the compiled infographic
 plt.show()
-
-# https://docs.jupyter.org/en/latest/install/notebook-classic.html 
-# Python 3.9.7
