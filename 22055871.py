@@ -75,7 +75,7 @@ plt.tight_layout()
 plt.savefig("22055871_attack_types.png", dpi=300)
 
 # Compile the infographic
-fig, axes = plt.subplots(2, 2, figsize=(22, 18))
+fig, axes = plt.subplots(2, 2, figsize=(22, 20))
 
 # Subplot 1
 sns.lineplot(x=total_attacks.index, y=total_attacks.values, marker='o', linewidth=2.5, color='purple', ax=axes[0, 0])
@@ -122,13 +122,16 @@ explanations = [
 ]
 
 for i, exp in enumerate(explanations):
-    plt.figtext(0.1, 0.02 - i * 0.02, exp, fontsize=12, color='black', ha='left')
+    plt.figtext(0.1, 0.01 + i * 0.03, exp, fontsize=12, color='black', ha='left')
 
 # Add name and ID in the right bottom corner
 plt.figtext(0.95, 0.01, "Khadiza Mahdin, ID: 22055871", fontsize=12, color='black', ha='right')
 
-plt.tight_layout(rect=[0, 0, 1, 0.9])
+plt.tight_layout(rect=[0, 0.05, 1, 0.95])
 plt.savefig("22055871.png", dpi=300)
 
 # Display the compiled infographic
 plt.show()
+
+# https://docs.jupyter.org/en/latest/install/notebook-classic.html 
+# Python 3.9.7
